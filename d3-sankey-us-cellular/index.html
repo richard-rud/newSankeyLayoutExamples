@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+#chart {
+  height: 500px;
+}
+
+.node rect {
+  cursor: move;
+  fill-opacity: .9;
+  shape-rendering: crispEdges;
+}
+
+.node text {
+  pointer-events: none;
+  text-shadow: 0 1px 0 #fff;
+}
+
+.link {
+  fill: none;
+  stroke: #000;
+  stroke-opacity: .2;
+}
+
+.link:hover {
+  stroke-opacity: .5;
+}
+
+</style>
+<body>
+  <header>
+    <aside>Sunday, April 6, 2014</aside>
+    <p>Author: Morgan Polotan</p>
+  </header>
+
+  <h1>US Cellular Sankey Diagram</h1>
+
+  <p id="chart"></p>
+
+<script src="http://d3js.org/d3.v3.js"></script>
+<script src="sankey.js"></script>
+<script src="underscore.js"></script>
+<script>
+/**************/
+/* REFERENCES */
+/**************/
+// Bostock's Sankey example: http://bost.ocks.org/mike/sankey/
+// Source for Bostock's Sankey example: view-source:http://bost.ocks.org/mike/sankey/
+
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var svg = d3.select("#chart").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var sankey = d3.sankey()
+    .nodeWidth(15)
+    .nodePadding(10)
+    .size([width, height]);
+
+// var path = sankey.link();
+
+var nodes = [],
+    uniqueNodes = [],
+    links = [];
+
+d3.csv("us-cellular.csv", function (error, data) {
+  data.forEach(function (d) {
+    var node = {};
+
+    node.userPath = d["User Path"];
+    node.count = +d["Count"];
+    node.converted = !! +d["Has Converted (1/0 = yes/no)"];
+    node.numDirect = +d["Num Direct Impressions"];
+    node.numIndirect = +d["Num Indirect Impressions"];
+
+    nodes.push(node);
+
+  });
+
+  // keep track of user paths we've seen before
+  var userPaths = {};
+
+  nodes.forEach(function (node) {
+    // if unique user path, push node into nodes array
+    if (!userPaths[node.userPath]) {
+      userPaths[node.userPath] = node.userPath;
+      uniqueNodes.push(node);
+
+    // if we've seen this user path before, increment relevant values
+    } else if (userPaths[node.userPath]) {
+      // find object in unique nodes with the same user path
+      var nodeSameUserPath = _.findWhere(uniqueNodes, { userPath: node.userPath });
+      // increment its relevant values
+      nodeSameUserPath.count += node.count;
+      nodeSameUserPath.numDirect += node.numDirect;
+      nodeSameUserPath.numIndirect += node.numIndirect;
+    }
+  }); 
+  debugger;
+
+  /**************/
+  /* FORMATTING */
+  /**************/
+  
+  // NODE OBJECT = {
+  //   dy: 'height of rect',
+  //   dx: 'width of rect',
+  //   name: 'text of node'
+  // }
+
+  // LINK OBJECT = {
+  //   source: {
+  //     // all properties of source node
+  //   },
+  //   target: {
+  //     // all properties of target node
+  //   }
+  // }
+
+  // NODE FORMATTING
+  // 1) format user path data into an array of POJO's
+  // 2) combine POJO's with the same user path and add numeric values to each other
+
+  /**************/
+  /* FORMATTING */
+  /**************/
+
+
+  // sankey
+      // .nodes()
+      // .links();
+      // .layout(1);
+
+  var link = svg.append("g").selectAll(".link")
+      .data(data[0]["Count"])
+    .enter().append("path")
+      .attr("class", "link")
+      .attr("d", path)
+      .style("stroke-width", function (d) { return d; });
+
+});
+
+</script>

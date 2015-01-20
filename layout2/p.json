@@ -1,0 +1,15 @@
+{"nodes":[
+{"name":"1. Fertilizer production","stock":"N/A","nodeColor":"#2ca25f"},          
+{"name":"2. Agriculture and greening soils","stock":"N/A","nodeColor":"#2ca25f"},  
+{"name":"3. Agriculture","stock":"N/A","nodeColor":"#2ca25f"},                  
+{"name":"4. Husbandry feed","stock":"N/A","nodeColor":"#2ca25f"}
+],
+"links":[
+{"source":0,"target":1,"value":25000,"type":"Phosphorus","colorType":"#ff7f00","flowName":"Organic fertilizer"},
+{"source":0,"target":1,"value":84000,"type":"Phosphorus","colorType":"#ff7f00","flowName":"Mineral fertilizer"},
+{"source":1,"target":2,"value":120000,"type":"Phosphorus","colorType":"#ff7f00","flowName":"Plant uptake"},
+{"source":2,"target":3,"value":42000,"type":"Phosphorus","colorType":"#ff7f00","flowName":"Plant products for feed"},
+{"source":2,"target":1,"value":3000,"type":"Phosphorus","colorType":"#ff7f00","flowName":"Seeds and planting potatos (Feedback loop)"},
+{"source":2,"target":1,"value":120000,"type":"Phosphorus","colorType":"#ff7f00","flowName":"Manure (Feedback loop)"},
+{"source":3,"target":2,"value":96000,"type":"Phosphorus","colorType":"#ff7f00","flowName":"Husbandry and fur feed (Feedback loop)"}
+]}

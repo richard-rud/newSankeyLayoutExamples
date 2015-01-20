@@ -34,7 +34,7 @@ body {
   height: 600px;
   width: 1250px;
   margin: 20px;
-  background-color: black;
+  background-color: white;
   border: solid;
   border-style: groove;
   /*Positioning the sankey*/
@@ -44,73 +44,9 @@ body {
 
 }
 
-#infoIMG {
-  height: 54px;
-  width: 64px;
-  margin: 40px;
-  padding: 0px;
-  top: 0px;
-  position: absolute;
-}
-
-  /*Positioning the bubble chart for DM*/
-
-#bubbles_DM {
-  height: 300px;
-  width: 300px;
-  margin: 40px;
-  padding: 20px;
-  background-color: white;
-  border: solid;
-  border-style: groove;
-  /*Positioning the bubble chart*/
-  position: absolute;
-  left: 1050px;
-  top: 350px;
-}
-
-#title_DM {
-  position: absolute;
-  left: 1100px;
-  top: 400px;
-}
-
-  /*Positioning the bubble chart for P*/
-
-
-#bubbles_P {
-  height: 300px;
-  width: 300px;
-  margin: 40px;
-  padding: 20px;
-  background-color: white;
-  border: solid;
-  border-style: groove;
-  position: absolute;
-  left: 1050px;
-  top: 50px;
-}
-
-#title_P {
-  position: absolute;
-  left: 1100px;
-  top: 100px;
-}
-
-#title_sankey {
-  position: absolute;
-  left: 30px;
-  top: 10px;
-}
-
 #buttonsStyle {
 margin: 24px;
 padding: 10px;
-}
-
-footer {
-  margin: 24px;
-  padding: 10px;
 }
 
 .node rect {
@@ -121,7 +57,8 @@ footer {
 
 .node text {
   pointer-events: none;
-  text-shadow: 0 1px 0 #fff;
+  font-size: 18px;
+  /*text-shadow: 0 1px 0 #fff;*/
 }
 
 .link {
@@ -133,13 +70,12 @@ footer {
 /** .cycleLink changes the stroke color, fill + opacity of the cycle flows**/
 
 .cycleLink {
-  /*fill: url(#pattern1);*/
-  /*stroke-dasharray: 2,1;*/
   opacity: .2;
+  stroke-linejoin: round;
 }
 
 .cycleLink:hover {
-  opacity: .5;
+opacity: .5;
 }
 
 .link:hover {
@@ -175,7 +111,7 @@ footer {
   
 <button id="dataset1" class="btn btn-success btn-lg" type="button"><span class="glyphicon glyphicon-floppy-open"></span>Load DM layer </button>
 
-<button id="dataset2" class="btn btn-success btn-lg" type="button"><span class="glyphicon glyphicon-floppy-open"></span>Load DM + P layer </button>
+<button id="dataset2" class="btn btn-success btn-lg" type="button"><span class="glyphicon glyphicon-floppy-open"></span>Load P layer </button>
 
 <button id="removeData" class="btn btn-danger btn-lg" type="button"><span class="glyphicon glyphicon-floppy-remove"></span> Remove all</button>
 
@@ -220,7 +156,7 @@ var tip_1 = d3.tip()
   .attr('class', 'd3-tip')
   .offset([-10, 0])
   .html(function(d) {
-    return "<p><span style='color:white'>" + d.source.name + " → " + d.target.name + "</p>" + "</p>" + format(d.value) + "</p>" + "<p>" + "Type: " + d.type + "</p>" + "Flow name: " +  d.flowName + "</span>";
+    return "<p><span style='color:white'>" + d.source.name + " → " + d.target.name + "</p>" + "</p>" + format(d.value) + "</p>" + "<p>" + "Type: " + d.type + "</p>" + "Flow name: " + "<span style='color:red'>" +  d.flowName + "</span>";
   });
 
   svg.call(tip_1);
@@ -252,40 +188,7 @@ d3.json(file, function(graph) {
 
 var allgraphics = svg.append("g").attr("id", "node-and-link-container" )//Makes a svg container
 
-//Creates the pattern for feedback loops
-
-/*
-  svg.append("pattern")
-    .attr('id', 'pattern1')
-    .attr('patternUnits', 'userSpaceOnUse')
-    .attr('width', '25')
-    .attr('height', '25')
-    //.style("stroke", "red")
-    .style("stroke-width", 5)
-    .append("path").attr("d", "M0,0 l95,95");
-    //.append("path").attr("d", "M25,0 l-25,0 l-25,-25, l0,-25");
-
-  //Following code creates arrow marker attached to the cycles
-
-/*
-  svg.append('marker')
-     .attr('id', "end-arrow")
-     .attr('markerHeight', 2.5)
-     .attr('markerWidth', 2,5)
-     .attr('orient', 'auto')
-     .attr('refX', -5)
-     .attr('refY', 0)
-     .attr('viewBox', '-5 -5 20 10')
-     .append('path')
-     .attr('d', 'M 0,0 m -5,-5 L 0,0 L -5,5 Z')
-     //.attr("fill", "#2ca25f")
-     //.style("fill", "#2ca25f")
-     .style("fill", "#969696");
-     //.style("stroke-opacity", "0.2");
-
-     */
-
-  //Following code creates the links
+//Following code creates the links
   var link = allgraphics.append("g").attr("id", "link-container")
       .selectAll(".link")
       .data(graph.links)
@@ -293,10 +196,8 @@ var allgraphics = svg.append("g").attr("id", "node-and-link-container" )//Makes 
       .attr("class", function(d) { return (d.causesCycle ? "cycleLink" : "link") })
       .attr("d", path)
       .sort(function(a, b) { return b.dy - a.dy; })
-      //.style("marker-end", "url(#end-arrow)")
       .style("stroke", function(d) {return d.colorType})
       .style("fill",  function(d) { if (d.causesCycle) {return d.colorType};})
-      //.style("stroke",  function(d) { if (d.causesCycle) {return "red"};})
       .on('mouseover', tip_1.show)
       .on('mouseout', tip_1.hide);
 
@@ -325,55 +226,25 @@ var allgraphics = svg.append("g").attr("id", "node-and-link-container" )//Makes 
       .attr("width", sankey.nodeWidth())
       .style("fill", "grey")
       .style("pointer-events", "all")
-      .on("mouseover", function(d){  
-      
-      svg.selectAll(".link")
-          .filter(function(l){
-            return l.source == d || l.target == d;
-          })
-          .style("stroke", "red")
-          .style('opacity', .7);
-
-      svg.selectAll(".cycleLink")
-          .filter(function(l){
-            return l.source == d || l.target == d;
-          })
-          .style("fill", "red")
-          .style("stroke", "red")
-          .style('opacity', .14);
-
-    })
-    .on("mouseout", function(d){
-      svg.selectAll(".link")
-          .filter(function(l){
-            return l.source == d || l.target == d;
-          })
-          .style("stroke", function(d) {return d.colorType});
-      
-      svg.selectAll(".cycleLink")
-          .filter(function(l){
-            return l.source == d || l.target == d;
-          })
-          .style("fill", function(d) {return d.colorType})
-          .style("stroke", function(d) {return d.colorType});
-    })
       .style("stroke", function(d) { return d3.rgb(d.color).darker(2); });
 
 //Adds the text for the different nodes (processes), based on the input parameters in the JSON files
+      
+      /*
       node.append("text")
         .attr("x", -30)
         .attr("y", function(d) { return d.dy + 15; })
         .attr("transform", null)
         .text(function(d) { return d.name; });
 
+        */
+
+
   function dragmove(d) {
-
-          d3.select(this).attr("transform", "translate(" + (d.x = Math.max(0, Math.min(width - d.dx, d3.event.x))) + "," + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))) + ")");
-    
-          sankey.relayout();
-
-          link.attr("d", path);
-    }
+    d3.select(this).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))) + ")");
+    sankey.relayout();
+    link.attr("d", path);
+  }
 
   var numCycles = 0;
   for( var i = 0; i< sankey.links().length; i++ ) {
@@ -409,7 +280,7 @@ var allgraphics = svg.append("g").attr("id", "node-and-link-container" )//Makes 
 
 d3.select("#dataset1").on("click", function() {
 
-  var jsonFile1 = "dryMatter.json"  
+  var jsonFile1 = "dm.json"  
 
   readFile(jsonFile1);
 
@@ -417,20 +288,11 @@ d3.select("#dataset1").on("click", function() {
 
 d3.select("#dataset2").on("click", function() {
 
-  var jsonFile2 = "dryMatterAndPhosphorus.json"  
+  var jsonFile2 = "p.json"  
 
   readFile(jsonFile2);
 
   });
-
-d3.select("#dataset3").on("click", function() {
-
-  var jsonFile3 = "dryMatter.json"  
-
-  readFile(jsonFile3);
-
-  });
-
 
 //Remove the layers displayed
 
